@@ -1,0 +1,42 @@
+aid: solo
+name: Solo.io
+description: >-
+  Solo.io provides Gloo Gateway and Gloo Mesh, enterprise API gateway
+  and service mesh solutions built on Envoy and Istio for Kubernetes
+  and multi-cloud environments.
+type: Index
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+tags:
+  - API Gateway
+  - Service Mesh
+  - Envoy
+url: >-
+  https://raw.githubusercontent.com/api-evangelist/solo/refs/heads/main/apis.yml
+created: '2026-03-27'
+modified: '2026-03-27'
+specificationVersion: '0.19'
+apis:
+  - aid: solo:solo
+    name: Solo.io
+    description: >-
+      Solo.io provides enterprise API gateway and service mesh solutions
+      built on Envoy and Istio.
+    humanURL: https://www.solo.io/
+    tags:
+      - API Gateway
+      - Service Mesh
+    properties:
+      - type: Documentation
+        url: https://docs.solo.io/
+      - type: Getting Started
+        url: https://docs.solo.io/gateway/latest/quickstart/
+common:
+  - type: Website
+    url: https://www.solo.io/
+  - type: Documentation
+    url: https://docs.solo.io/
+  - type: GitHub Organization
+    url: https://github.com/solo-io
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
