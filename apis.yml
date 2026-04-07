@@ -8,8 +8,8 @@ type: Index
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
   - API Gateway
-  - Service Mesh
   - Envoy
+  - Service Mesh
 url: >-
   https://raw.githubusercontent.com/api-evangelist/solo/refs/heads/main/apis.yml
 created: '2026-03-27'
