@@ -51,6 +51,60 @@ apis:
       - type: SDK
         url: https://github.com/solo-io/kgateway-client
         title: Go Client
+      - type: KubernetesCRD
+        url: crd/solo-gloo-enterprise-gloo-solo-io-v1-authconfig.yaml
+        title: AuthConfig CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gateway-gloo-solo-io-directresponses.yaml
+        title: DirectResponse CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gateway-gloo-solo-io-gatewayparameters.yaml
+        title: GatewayParameters CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gateway-solo-io-v1-gateway.yaml
+        title: Gateway CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gateway-solo-io-v1-httplisteneroption.yaml
+        title: HttpListenerOption CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gateway-solo-io-v1-listeneroption.yaml
+        title: ListenerOption CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gateway-solo-io-v1-matchablehttpgateway.yaml
+        title: MatchableHttpGateway CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gateway-solo-io-v1-matchabletcpgateway.yaml
+        title: MatchableTcpGateway CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gateway-solo-io-v1-routeoption.yaml
+        title: RouteOption CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gateway-solo-io-v1-routetable.yaml
+        title: RouteTable CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gateway-solo-io-v1-virtualhostoption.yaml
+        title: VirtualHostOption CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gateway-solo-io-v1-virtualservice.yaml
+        title: VirtualService CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gloo-solo-io-v1-proxy.yaml
+        title: Proxy CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gloo-solo-io-v1-settings.yaml
+        title: Settings CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gloo-solo-io-v1-upstream.yaml
+        title: Upstream CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-gloo-solo-io-v1-upstreamgroup.yaml
+        title: UpstreamGroup CRD
+      - type: KubernetesCRD
+        url: crd/solo-gloo-ratelimit-config.yaml
+        title: RateLimitConfig CRD
+      - type: KubernetesCRD
+        url: crd/solo-kgateway-tcproute-crd.yaml
+        title: TCPRoute CRD
   - aid: solo:istio
     name: Solo Enterprise for Istio
     description: >-
@@ -91,6 +145,15 @@ apis:
       - type: GitHubRepository
         url: https://github.com/solo-io/agentgateway-new-ui
         title: Agentgateway Repository
+      - type: KubernetesCRD
+        url: crd/solo-agentgateway-agentgatewaybackends.yaml
+        title: AgentgatewayBackend CRD
+      - type: KubernetesCRD
+        url: crd/solo-agentgateway-agentgatewayparameters.yaml
+        title: AgentgatewayParameters CRD
+      - type: KubernetesCRD
+        url: crd/solo-agentgateway-agentgatewaypolicies.yaml
+        title: AgentgatewayPolicy CRD
   - aid: solo:kagent
     name: Solo Enterprise for kagent
     description: >-

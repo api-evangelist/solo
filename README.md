@@ -33,6 +33,24 @@ Kubernetes-native ingress controller and next-generation API gateway built on En
 - [Authentication](https://docs.solo.io/kgateway/latest/security/)
 - [Gloo Gateway Repository](https://github.com/solo-io/gloo)
 - [Go Client](https://github.com/solo-io/kgateway-client)
+- [AuthConfig CRD](crd/solo-gloo-enterprise-gloo-solo-io-v1-authconfig.yaml)
+- [DirectResponse CRD](crd/solo-gloo-gateway-gloo-solo-io-directresponses.yaml)
+- [GatewayParameters CRD](crd/solo-gloo-gateway-gloo-solo-io-gatewayparameters.yaml)
+- [Gateway CRD](crd/solo-gloo-gateway-solo-io-v1-gateway.yaml)
+- [HttpListenerOption CRD](crd/solo-gloo-gateway-solo-io-v1-httplisteneroption.yaml)
+- [ListenerOption CRD](crd/solo-gloo-gateway-solo-io-v1-listeneroption.yaml)
+- [MatchableHttpGateway CRD](crd/solo-gloo-gateway-solo-io-v1-matchablehttpgateway.yaml)
+- [MatchableTcpGateway CRD](crd/solo-gloo-gateway-solo-io-v1-matchabletcpgateway.yaml)
+- [RouteOption CRD](crd/solo-gloo-gateway-solo-io-v1-routeoption.yaml)
+- [RouteTable CRD](crd/solo-gloo-gateway-solo-io-v1-routetable.yaml)
+- [VirtualHostOption CRD](crd/solo-gloo-gateway-solo-io-v1-virtualhostoption.yaml)
+- [VirtualService CRD](crd/solo-gloo-gateway-solo-io-v1-virtualservice.yaml)
+- [Proxy CRD](crd/solo-gloo-gloo-solo-io-v1-proxy.yaml)
+- [Settings CRD](crd/solo-gloo-gloo-solo-io-v1-settings.yaml)
+- [Upstream CRD](crd/solo-gloo-gloo-solo-io-v1-upstream.yaml)
+- [UpstreamGroup CRD](crd/solo-gloo-gloo-solo-io-v1-upstreamgroup.yaml)
+- [RateLimitConfig CRD](crd/solo-gloo-ratelimit-config.yaml)
+- [TCPRoute CRD](crd/solo-kgateway-tcproute-crd.yaml)
 
 ### Solo Enterprise for Istio
 Enterprise service mesh solution built on Istio for connecting, securing, and observing microservices across multiple clusters and clouds, including Istio Ambient Mesh support.
@@ -62,6 +80,9 @@ AI connectivity and governance gateway for agents and LLMs, supporting traffic r
 - [Getting Started](https://docs.solo.io/agentgateway/latest/quickstart/)
 - [Authentication](https://docs.solo.io/agentgateway/latest/security/)
 - [Agentgateway Repository](https://github.com/solo-io/agentgateway-new-ui)
+- [AgentgatewayBackend CRD](crd/solo-agentgateway-agentgatewaybackends.yaml)
+- [AgentgatewayParameters CRD](crd/solo-agentgateway-agentgatewayparameters.yaml)
+- [AgentgatewayPolicy CRD](crd/solo-agentgateway-agentgatewaypolicies.yaml)
 
 ### Solo Enterprise for kagent
 Enterprise AI agent framework for Kubernetes that enables building, managing, and scaling intelligent agents with observability, security, human-in-the-loop workflows, and support for multiple LLM providers.
@@ -142,6 +163,34 @@ Enterprise AI agent framework for Kubernetes that enables building, managing, an
 | Google Vertex AI | Google Cloud Vertex AI LLM provider integration. |
 | OpenTelemetry | Observability integration for tracing, metrics, and logging. |
 | ArgoCD | GitOps deployment support for Solo products. |
+
+## Kubernetes CRDs
+
+Kubernetes Custom Resource Definitions defining the declarative API surface.
+
+| Kind | Group | Version | Scope | File |
+|------|-------|---------|-------|------|
+| AuthConfig | enterprise.gloo.solo.io | v1 | Namespaced | [solo-gloo-enterprise-gloo-solo-io-v1-authconfig.yaml](crd/solo-gloo-enterprise-gloo-solo-io-v1-authconfig.yaml) |
+| DirectResponse | gateway.gloo.solo.io | v1alpha1 | Namespaced | [solo-gloo-gateway-gloo-solo-io-directresponses.yaml](crd/solo-gloo-gateway-gloo-solo-io-directresponses.yaml) |
+| GatewayParameters | gateway.gloo.solo.io | v1alpha1 | Namespaced | [solo-gloo-gateway-gloo-solo-io-gatewayparameters.yaml](crd/solo-gloo-gateway-gloo-solo-io-gatewayparameters.yaml) |
+| Gateway | gateway.solo.io | v1 | Namespaced | [solo-gloo-gateway-solo-io-v1-gateway.yaml](crd/solo-gloo-gateway-solo-io-v1-gateway.yaml) |
+| HttpListenerOption | gateway.solo.io | v1 | Namespaced | [solo-gloo-gateway-solo-io-v1-httplisteneroption.yaml](crd/solo-gloo-gateway-solo-io-v1-httplisteneroption.yaml) |
+| ListenerOption | gateway.solo.io | v1 | Namespaced | [solo-gloo-gateway-solo-io-v1-listeneroption.yaml](crd/solo-gloo-gateway-solo-io-v1-listeneroption.yaml) |
+| MatchableHttpGateway | gateway.solo.io | v1 | Namespaced | [solo-gloo-gateway-solo-io-v1-matchablehttpgateway.yaml](crd/solo-gloo-gateway-solo-io-v1-matchablehttpgateway.yaml) |
+| MatchableTcpGateway | gateway.solo.io | v1 | Namespaced | [solo-gloo-gateway-solo-io-v1-matchabletcpgateway.yaml](crd/solo-gloo-gateway-solo-io-v1-matchabletcpgateway.yaml) |
+| RouteOption | gateway.solo.io | v1 | Namespaced | [solo-gloo-gateway-solo-io-v1-routeoption.yaml](crd/solo-gloo-gateway-solo-io-v1-routeoption.yaml) |
+| RouteTable | gateway.solo.io | v1 | Namespaced | [solo-gloo-gateway-solo-io-v1-routetable.yaml](crd/solo-gloo-gateway-solo-io-v1-routetable.yaml) |
+| VirtualHostOption | gateway.solo.io | v1 | Namespaced | [solo-gloo-gateway-solo-io-v1-virtualhostoption.yaml](crd/solo-gloo-gateway-solo-io-v1-virtualhostoption.yaml) |
+| VirtualService | gateway.solo.io | v1 | Namespaced | [solo-gloo-gateway-solo-io-v1-virtualservice.yaml](crd/solo-gloo-gateway-solo-io-v1-virtualservice.yaml) |
+| Proxy | gloo.solo.io | v1 | Namespaced | [solo-gloo-gloo-solo-io-v1-proxy.yaml](crd/solo-gloo-gloo-solo-io-v1-proxy.yaml) |
+| Settings | gloo.solo.io | v1 | Namespaced | [solo-gloo-gloo-solo-io-v1-settings.yaml](crd/solo-gloo-gloo-solo-io-v1-settings.yaml) |
+| Upstream | gloo.solo.io | v1 | Namespaced | [solo-gloo-gloo-solo-io-v1-upstream.yaml](crd/solo-gloo-gloo-solo-io-v1-upstream.yaml) |
+| UpstreamGroup | gloo.solo.io | v1 | Namespaced | [solo-gloo-gloo-solo-io-v1-upstreamgroup.yaml](crd/solo-gloo-gloo-solo-io-v1-upstreamgroup.yaml) |
+| RateLimitConfig | ratelimit.solo.io | v1alpha1 | Namespaced | [solo-gloo-ratelimit-config.yaml](crd/solo-gloo-ratelimit-config.yaml) |
+| TCPRoute | gateway.networking.k8s.io | v1alpha2 | Namespaced | [solo-kgateway-tcproute-crd.yaml](crd/solo-kgateway-tcproute-crd.yaml) |
+| AgentgatewayBackend | agentgateway.dev | v1alpha1 | Namespaced | [solo-agentgateway-agentgatewaybackends.yaml](crd/solo-agentgateway-agentgatewaybackends.yaml) |
+| AgentgatewayParameters | agentgateway.dev | v1alpha1 | Namespaced | [solo-agentgateway-agentgatewayparameters.yaml](crd/solo-agentgateway-agentgatewayparameters.yaml) |
+| AgentgatewayPolicy | agentgateway.dev | v1alpha1 | Namespaced | [solo-agentgateway-agentgatewaypolicies.yaml](crd/solo-agentgateway-agentgatewaypolicies.yaml) |
 
 ## Maintainers
 
