@@ -1,0 +1,81 @@
+naftiko: "1.0.0-alpha2"
+
+info:
+  title: Solo agentgateway Backend Publish
+  description: >-
+    Publishes Naftiko-built MCP servers and LLM proxies as Solo
+    agentgateway Backend CRDs so Solo's AI gateway brokers, governs,
+    and observes traffic between agents and the Naftiko-exposed MCP
+    surface. When Naftiko ships an `exposes: mcp` capability, this
+    capability registers the matching AgentgatewayBackend so Solo's
+    Envoy data plane routes MCP traffic through the agent gateway
+    with auth + guardrails + token tracking in place.
+  tags:
+    - Naftiko
+    - Solo
+    - Partnership
+    - agentgateway
+    - AI-Gateway
+    - MCP
+    - LLM
+  created: '2026-05-21'
+  modified: '2026-05-21'
+
+binds:
+  - namespace: k8s-env
+    description: Kubernetes API server + ServiceAccount token for managing Solo CRDs.
+    keys:
+      K8S_API_BASE: K8S_API_BASE
+      K8S_API_TOKEN: K8S_API_TOKEN
+
+capability:
+  consumes:
+    - namespace: solo-agentgateway-backend
+      type: http
+      baseUri: '{{K8S_API_BASE}}'
+      authentication:
+        type: bearer
+        token: '{{K8S_API_TOKEN}}'
+      resources:
+        - name: agentgatewaybackends
+          path: '/apis/agentgateway.dev/v1alpha1/namespaces/{{namespace}}/agentgatewaybackends'
+          operations:
+            - { name: list-backends, method: GET, inputParameters: [{ name: namespace, in: path, required: true }] }
+            - { name: create-backend, method: POST, inputParameters: [{ name: namespace, in: path, required: true }] }
+        - name: agentgatewaybackend
+          path: '/apis/agentgateway.dev/v1alpha1/namespaces/{{namespace}}/agentgatewaybackends/{{name}}'
+          operations:
+            - { name: get-backend, method: GET, inputParameters: [{ name: namespace, in: path, required: true }, { name: name, in: path, required: true }] }
+            - { name: update-backend, method: PUT, inputParameters: [{ name: namespace, in: path, required: true }, { name: name, in: path, required: true }] }
+            - { name: delete-backend, method: DELETE, inputParameters: [{ name: namespace, in: path, required: true }, { name: name, in: path, required: true }] }
+
+  exposes:
+    - type: rest
+      address: 0.0.0.0
+      port: 8080
+      namespace: solo-agentgateway-backend-publish-rest
+      description: REST surface for managing agentgateway Backend CRDs from Naftiko.
+      resources:
+        - name: backends
+          path: '/agentgateway/{namespace}/backends'
+          operations:
+            - { name: list-backends, method: GET, call: solo-agentgateway-backend.list-backends, inputParameters: [{ name: namespace, in: path, required: true }] }
+            - { name: create-backend, method: POST, call: solo-agentgateway-backend.create-backend, inputParameters: [{ name: namespace, in: path, required: true }] }
+        - name: backend
+          path: '/agentgateway/{namespace}/backends/{name}'
+          operations:
+            - { name: get-backend, method: GET, call: solo-agentgateway-backend.get-backend, inputParameters: [{ name: namespace, in: path, required: true }, { name: name, in: path, required: true }] }
+            - { name: update-backend, method: PUT, call: solo-agentgateway-backend.update-backend, inputParameters: [{ name: namespace, in: path, required: true }, { name: name, in: path, required: true }] }
+            - { name: delete-backend, method: DELETE, call: solo-agentgateway-backend.delete-backend, inputParameters: [{ name: namespace, in: path, required: true }, { name: name, in: path, required: true }] }
+    - type: mcp
+      address: 0.0.0.0
+      port: 9090
+      namespace: solo-agentgateway-backend-publish-mcp
+      transport: http
+      description: MCP surface — agent tools for publishing Naftiko MCP servers and LLM proxies as agentgateway Backends.
+      tools:
+        - { name: solo-list-agentgateway-backends, description: List agentgateway Backend CRDs (MCP + LLM provider definitions)., hints: { readOnly: true, idempotent: true }, call: solo-agentgateway-backend.list-backends }
+        - { name: solo-create-agentgateway-backend, description: Publish a Naftiko MCP server or LLM proxy as an agentgateway Backend., hints: { readOnly: false, idempotent: false }, call: solo-agentgateway-backend.create-backend }
+        - { name: solo-get-agentgateway-backend, description: Get an agentgateway Backend CRD., hints: { readOnly: true, idempotent: true }, call: solo-agentgateway-backend.get-backend }
+        - { name: solo-update-agentgateway-backend, description: Update an agentgateway Backend CRD., hints: { readOnly: false, idempotent: true }, call: solo-agentgateway-backend.update-backend }
+        - { name: solo-delete-agentgateway-backend, description: Delete an agentgateway Backend CRD., hints: { readOnly: false, destructive: true }, call: solo-agentgateway-backend.delete-backend }

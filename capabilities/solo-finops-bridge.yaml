@@ -1,0 +1,87 @@
+naftiko: "1.0.0-alpha2"
+
+info:
+  title: Solo FinOps Bridge
+  description: >-
+    Bridges Solo's FOCUS-aligned cost-allocation metering (api_requests,
+    data_egress, compute_seconds across kgateway + agentgateway +
+    Gloo Mesh) into Naftiko's per-call cost-attribution pipeline so
+    every gateway-routed Naftiko capability carries unified cost
+    labels through to Kubecost dashboards.
+  tags:
+    - Naftiko
+    - Solo
+    - Partnership
+    - FinOps
+    - Cost-Attribution
+    - FOCUS
+  created: '2026-05-21'
+  modified: '2026-05-21'
+
+binds:
+  - namespace: solo-finops-env
+    description: Solo FinOps / billing API endpoint + token.
+    keys:
+      SOLO_FINOPS_BASE: SOLO_FINOPS_BASE
+      SOLO_FINOPS_TOKEN: SOLO_FINOPS_TOKEN
+
+capability:
+  consumes:
+    - namespace: solo-finops
+      type: http
+      baseUri: '{{SOLO_FINOPS_BASE}}'
+      authentication:
+        type: bearer
+        token: '{{SOLO_FINOPS_TOKEN}}'
+      resources:
+        - name: usage
+          path: '/v1/finops/usage'
+          operations:
+            - { name: list-usage, method: GET }
+        - name: usage-by-consumer
+          path: '/v1/finops/usage/consumers/{{consumer}}'
+          operations:
+            - { name: get-consumer-usage, method: GET, inputParameters: [{ name: consumer, in: path, required: true }] }
+        - name: cost-allocation
+          path: '/v1/finops/allocations'
+          operations:
+            - { name: list-allocations, method: GET }
+        - name: meters
+          path: '/v1/finops/meters'
+          operations:
+            - { name: list-meters, method: GET }
+
+  exposes:
+    - type: rest
+      address: 0.0.0.0
+      port: 8080
+      namespace: solo-finops-bridge-rest
+      description: REST surface for pulling Solo FinOps metering into Naftiko cost attribution.
+      resources:
+        - name: usage
+          path: '/finops/usage'
+          operations:
+            - { name: list-usage, method: GET, call: solo-finops.list-usage }
+        - name: usage-by-consumer
+          path: '/finops/usage/consumers/{consumer}'
+          operations:
+            - { name: get-consumer-usage, method: GET, call: solo-finops.get-consumer-usage, inputParameters: [{ name: consumer, in: path, required: true }] }
+        - name: cost-allocation
+          path: '/finops/allocations'
+          operations:
+            - { name: list-allocations, method: GET, call: solo-finops.list-allocations }
+        - name: meters
+          path: '/finops/meters'
+          operations:
+            - { name: list-meters, method: GET, call: solo-finops.list-meters }
+    - type: mcp
+      address: 0.0.0.0
+      port: 9090
+      namespace: solo-finops-bridge-mcp
+      transport: http
+      description: MCP surface — agent tools for pulling Solo FinOps metering into Naftiko cost attribution.
+      tools:
+        - { name: solo-list-finops-usage, description: List Solo FinOps usage across api_requests, data_egress, compute_seconds., hints: { readOnly: true, idempotent: true }, call: solo-finops.list-usage }
+        - { name: solo-get-finops-consumer-usage, description: Get per-consumer Solo FinOps usage for cost attribution., hints: { readOnly: true, idempotent: true }, call: solo-finops.get-consumer-usage }
+        - { name: solo-list-finops-allocations, description: List Solo FinOps FOCUS-aligned cost allocations for unified reporting., hints: { readOnly: true, idempotent: true }, call: solo-finops.list-allocations }
+        - { name: solo-list-finops-meters, description: List Solo FinOps meter definitions (api_requests, data_egress, compute_seconds)., hints: { readOnly: true, idempotent: true }, call: solo-finops.list-meters }

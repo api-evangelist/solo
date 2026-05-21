@@ -1,0 +1,92 @@
+naftiko: "1.0.0-alpha2"
+
+info:
+  title: Solo Istio Multi-Cluster Bridge
+  description: >-
+    Bridges Naftiko Fleet topology to Solo Enterprise for Istio
+    (Gloo Mesh) multi-cluster routing — publishes a Naftiko
+    capability's mesh-shaped exposure as Istio VirtualService +
+    DestinationRule via the Gloo Mesh management plane so the
+    Ambient Mesh routes east-west service-to-service traffic to
+    Naftiko-exposed adapters across clusters.
+  tags:
+    - Naftiko
+    - Solo
+    - Partnership
+    - Istio
+    - Gloo-Mesh
+    - Ambient-Mesh
+    - Multi-Cluster
+  created: '2026-05-21'
+  modified: '2026-05-21'
+
+binds:
+  - namespace: solo-mesh-env
+    description: Gloo Mesh management plane endpoint + token.
+    keys:
+      SOLO_MESH_BASE: SOLO_MESH_BASE
+      SOLO_MESH_TOKEN: SOLO_MESH_TOKEN
+
+capability:
+  consumes:
+    - namespace: solo-mesh
+      type: http
+      baseUri: '{{SOLO_MESH_BASE}}'
+      authentication:
+        type: bearer
+        token: '{{SOLO_MESH_TOKEN}}'
+      resources:
+        - name: virtualservices
+          path: '/v1/workspaces/{{workspace}}/virtualservices'
+          operations:
+            - { name: list-virtualservices, method: GET, inputParameters: [{ name: workspace, in: path, required: true }] }
+            - { name: create-virtualservice, method: POST, inputParameters: [{ name: workspace, in: path, required: true }] }
+        - name: virtualservice
+          path: '/v1/workspaces/{{workspace}}/virtualservices/{{name}}'
+          operations:
+            - { name: get-virtualservice, method: GET, inputParameters: [{ name: workspace, in: path, required: true }, { name: name, in: path, required: true }] }
+            - { name: update-virtualservice, method: PUT, inputParameters: [{ name: workspace, in: path, required: true }, { name: name, in: path, required: true }] }
+            - { name: delete-virtualservice, method: DELETE, inputParameters: [{ name: workspace, in: path, required: true }, { name: name, in: path, required: true }] }
+        - name: destinationrules
+          path: '/v1/workspaces/{{workspace}}/destinationrules'
+          operations:
+            - { name: list-destinationrules, method: GET, inputParameters: [{ name: workspace, in: path, required: true }] }
+            - { name: create-destinationrule, method: POST, inputParameters: [{ name: workspace, in: path, required: true }] }
+
+  exposes:
+    - type: rest
+      address: 0.0.0.0
+      port: 8080
+      namespace: solo-istio-multicluster-bridge-rest
+      description: REST surface for managing Gloo Mesh multi-cluster routing from Naftiko.
+      resources:
+        - name: virtualservices
+          path: '/mesh/{workspace}/virtualservices'
+          operations:
+            - { name: list-virtualservices, method: GET, call: solo-mesh.list-virtualservices, inputParameters: [{ name: workspace, in: path, required: true }] }
+            - { name: create-virtualservice, method: POST, call: solo-mesh.create-virtualservice, inputParameters: [{ name: workspace, in: path, required: true }] }
+        - name: virtualservice
+          path: '/mesh/{workspace}/virtualservices/{name}'
+          operations:
+            - { name: get-virtualservice, method: GET, call: solo-mesh.get-virtualservice, inputParameters: [{ name: workspace, in: path, required: true }, { name: name, in: path, required: true }] }
+            - { name: update-virtualservice, method: PUT, call: solo-mesh.update-virtualservice, inputParameters: [{ name: workspace, in: path, required: true }, { name: name, in: path, required: true }] }
+            - { name: delete-virtualservice, method: DELETE, call: solo-mesh.delete-virtualservice, inputParameters: [{ name: workspace, in: path, required: true }, { name: name, in: path, required: true }] }
+        - name: destinationrules
+          path: '/mesh/{workspace}/destinationrules'
+          operations:
+            - { name: list-destinationrules, method: GET, call: solo-mesh.list-destinationrules, inputParameters: [{ name: workspace, in: path, required: true }] }
+            - { name: create-destinationrule, method: POST, call: solo-mesh.create-destinationrule, inputParameters: [{ name: workspace, in: path, required: true }] }
+    - type: mcp
+      address: 0.0.0.0
+      port: 9090
+      namespace: solo-istio-multicluster-bridge-mcp
+      transport: http
+      description: MCP surface — agent tools for syncing Naftiko Fleet topology with Gloo Mesh multi-cluster routing.
+      tools:
+        - { name: solo-list-mesh-virtualservices, description: List Gloo Mesh VirtualService entries in a workspace., hints: { readOnly: true, idempotent: true }, call: solo-mesh.list-virtualservices }
+        - { name: solo-create-mesh-virtualservice, description: Publish a Naftiko mesh-shaped capability as a Gloo Mesh VirtualService., hints: { readOnly: false, idempotent: false }, call: solo-mesh.create-virtualservice }
+        - { name: solo-get-mesh-virtualservice, description: Get a Gloo Mesh VirtualService entry., hints: { readOnly: true, idempotent: true }, call: solo-mesh.get-virtualservice }
+        - { name: solo-update-mesh-virtualservice, description: Update a Gloo Mesh VirtualService entry., hints: { readOnly: false, idempotent: true }, call: solo-mesh.update-virtualservice }
+        - { name: solo-delete-mesh-virtualservice, description: Delete a Gloo Mesh VirtualService entry., hints: { readOnly: false, destructive: true }, call: solo-mesh.delete-virtualservice }
+        - { name: solo-list-mesh-destinationrules, description: List Gloo Mesh DestinationRule entries in a workspace., hints: { readOnly: true, idempotent: true }, call: solo-mesh.list-destinationrules }
+        - { name: solo-create-mesh-destinationrule, description: Publish a Naftiko-declared DestinationRule for Gloo Mesh., hints: { readOnly: false, idempotent: false }, call: solo-mesh.create-destinationrule }

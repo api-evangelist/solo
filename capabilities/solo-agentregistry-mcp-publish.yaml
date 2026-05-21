@@ -1,0 +1,92 @@
+naftiko: "1.0.0-alpha2"
+
+info:
+  title: Solo agentregistry MCP Publish
+  description: >-
+    Publishes Naftiko-built MCP servers to Solo's agentregistry — the
+    centralized MCP catalog that agents query for tool discovery
+    across the cluster. When Naftiko exposes a capability over MCP,
+    this capability registers the server + its tools in agentregistry
+    so kagent + every other agent in the Solo platform can discover
+    and route to it through Solo's governed MCP plane.
+  tags:
+    - Naftiko
+    - Solo
+    - Partnership
+    - agentregistry
+    - MCP
+    - Registry
+    - Discovery
+  created: '2026-05-21'
+  modified: '2026-05-21'
+
+binds:
+  - namespace: solo-agentregistry-env
+    description: Solo agentregistry REST endpoint + token.
+    keys:
+      SOLO_AGENTREGISTRY_BASE: SOLO_AGENTREGISTRY_BASE
+      SOLO_AGENTREGISTRY_TOKEN: SOLO_AGENTREGISTRY_TOKEN
+
+capability:
+  consumes:
+    - namespace: solo-agentregistry
+      type: http
+      baseUri: '{{SOLO_AGENTREGISTRY_BASE}}'
+      authentication:
+        type: bearer
+        token: '{{SOLO_AGENTREGISTRY_TOKEN}}'
+      resources:
+        - name: mcp-servers
+          path: '/v1/mcp/servers'
+          operations:
+            - { name: list-mcp-servers, method: GET }
+            - { name: register-mcp-server, method: POST }
+        - name: mcp-server
+          path: '/v1/mcp/servers/{{server_id}}'
+          operations:
+            - { name: get-mcp-server, method: GET, inputParameters: [{ name: server_id, in: path, required: true }] }
+            - { name: update-mcp-server, method: PUT, inputParameters: [{ name: server_id, in: path, required: true }] }
+            - { name: delete-mcp-server, method: DELETE, inputParameters: [{ name: server_id, in: path, required: true }] }
+        - name: mcp-tools
+          path: '/v1/mcp/servers/{{server_id}}/tools'
+          operations:
+            - { name: list-mcp-tools, method: GET, inputParameters: [{ name: server_id, in: path, required: true }] }
+            - { name: publish-mcp-tool, method: POST, inputParameters: [{ name: server_id, in: path, required: true }] }
+
+  exposes:
+    - type: rest
+      address: 0.0.0.0
+      port: 8080
+      namespace: solo-agentregistry-mcp-publish-rest
+      description: REST surface for managing MCP server entries in Solo's agentregistry from Naftiko.
+      resources:
+        - name: mcp-servers
+          path: '/agentregistry/mcp/servers'
+          operations:
+            - { name: list-mcp-servers, method: GET, call: solo-agentregistry.list-mcp-servers }
+            - { name: register-mcp-server, method: POST, call: solo-agentregistry.register-mcp-server }
+        - name: mcp-server
+          path: '/agentregistry/mcp/servers/{server-id}'
+          operations:
+            - { name: get-mcp-server, method: GET, call: solo-agentregistry.get-mcp-server, inputParameters: [{ name: server-id, in: path, required: true }] }
+            - { name: update-mcp-server, method: PUT, call: solo-agentregistry.update-mcp-server, inputParameters: [{ name: server-id, in: path, required: true }] }
+            - { name: delete-mcp-server, method: DELETE, call: solo-agentregistry.delete-mcp-server, inputParameters: [{ name: server-id, in: path, required: true }] }
+        - name: mcp-tools
+          path: '/agentregistry/mcp/servers/{server-id}/tools'
+          operations:
+            - { name: list-mcp-tools, method: GET, call: solo-agentregistry.list-mcp-tools, inputParameters: [{ name: server-id, in: path, required: true }] }
+            - { name: publish-mcp-tool, method: POST, call: solo-agentregistry.publish-mcp-tool, inputParameters: [{ name: server-id, in: path, required: true }] }
+    - type: mcp
+      address: 0.0.0.0
+      port: 9090
+      namespace: solo-agentregistry-mcp-publish-mcp
+      transport: http
+      description: MCP surface — agent tools for publishing Naftiko MCP servers to Solo's agentregistry.
+      tools:
+        - { name: solo-list-agentregistry-mcp-servers, description: List MCP servers in Solo's agentregistry catalog., hints: { readOnly: true, idempotent: true }, call: solo-agentregistry.list-mcp-servers }
+        - { name: solo-register-agentregistry-mcp-server, description: Register a Naftiko-built MCP server in Solo's agentregistry., hints: { readOnly: false, idempotent: false }, call: solo-agentregistry.register-mcp-server }
+        - { name: solo-get-agentregistry-mcp-server, description: Get a single MCP server entry from agentregistry., hints: { readOnly: true, idempotent: true }, call: solo-agentregistry.get-mcp-server }
+        - { name: solo-update-agentregistry-mcp-server, description: Update an MCP server entry in agentregistry., hints: { readOnly: false, idempotent: true }, call: solo-agentregistry.update-mcp-server }
+        - { name: solo-delete-agentregistry-mcp-server, description: Delete an MCP server entry from agentregistry., hints: { readOnly: false, destructive: true }, call: solo-agentregistry.delete-mcp-server }
+        - { name: solo-list-agentregistry-mcp-tools, description: List tools registered for an agentregistry MCP server., hints: { readOnly: true, idempotent: true }, call: solo-agentregistry.list-mcp-tools }
+        - { name: solo-publish-agentregistry-mcp-tool, description: Publish a Naftiko-exposed MCP tool into agentregistry., hints: { readOnly: false, idempotent: false }, call: solo-agentregistry.publish-mcp-tool }

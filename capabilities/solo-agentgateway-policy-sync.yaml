@@ -1,0 +1,80 @@
+naftiko: "1.0.0-alpha2"
+
+info:
+  title: Solo agentgateway Policy Sync
+  description: >-
+    Synchronises Naftiko governance declarations (guardrails, rate
+    limits, MCP tool ACLs, PII filters) with Solo agentgateway Policy
+    CRDs so AI traffic governance is enforced at the gateway layer
+    with the same policies Naftiko declares at the capability spec
+    layer. Closes the loop between design-time Spectral / OPA rules
+    in Naftiko and runtime Envoy filtering in agentgateway.
+  tags:
+    - Naftiko
+    - Solo
+    - Partnership
+    - agentgateway
+    - AI-Governance
+    - Guardrails
+    - Policy
+  created: '2026-05-21'
+  modified: '2026-05-21'
+
+binds:
+  - namespace: k8s-env
+    description: Kubernetes API server + ServiceAccount token for managing Solo CRDs.
+    keys:
+      K8S_API_BASE: K8S_API_BASE
+      K8S_API_TOKEN: K8S_API_TOKEN
+
+capability:
+  consumes:
+    - namespace: solo-agentgateway-policy
+      type: http
+      baseUri: '{{K8S_API_BASE}}'
+      authentication:
+        type: bearer
+        token: '{{K8S_API_TOKEN}}'
+      resources:
+        - name: agentgatewaypolicies
+          path: '/apis/agentgateway.dev/v1alpha1/namespaces/{{namespace}}/agentgatewaypolicies'
+          operations:
+            - { name: list-policies, method: GET, inputParameters: [{ name: namespace, in: path, required: true }] }
+            - { name: create-policy, method: POST, inputParameters: [{ name: namespace, in: path, required: true }] }
+        - name: agentgatewaypolicy
+          path: '/apis/agentgateway.dev/v1alpha1/namespaces/{{namespace}}/agentgatewaypolicies/{{name}}'
+          operations:
+            - { name: get-policy, method: GET, inputParameters: [{ name: namespace, in: path, required: true }, { name: name, in: path, required: true }] }
+            - { name: update-policy, method: PUT, inputParameters: [{ name: namespace, in: path, required: true }, { name: name, in: path, required: true }] }
+            - { name: delete-policy, method: DELETE, inputParameters: [{ name: namespace, in: path, required: true }, { name: name, in: path, required: true }] }
+
+  exposes:
+    - type: rest
+      address: 0.0.0.0
+      port: 8080
+      namespace: solo-agentgateway-policy-sync-rest
+      description: REST surface for managing agentgateway Policy CRDs from Naftiko.
+      resources:
+        - name: policies
+          path: '/agentgateway/{namespace}/policies'
+          operations:
+            - { name: list-policies, method: GET, call: solo-agentgateway-policy.list-policies, inputParameters: [{ name: namespace, in: path, required: true }] }
+            - { name: create-policy, method: POST, call: solo-agentgateway-policy.create-policy, inputParameters: [{ name: namespace, in: path, required: true }] }
+        - name: policy
+          path: '/agentgateway/{namespace}/policies/{name}'
+          operations:
+            - { name: get-policy, method: GET, call: solo-agentgateway-policy.get-policy, inputParameters: [{ name: namespace, in: path, required: true }, { name: name, in: path, required: true }] }
+            - { name: update-policy, method: PUT, call: solo-agentgateway-policy.update-policy, inputParameters: [{ name: namespace, in: path, required: true }, { name: name, in: path, required: true }] }
+            - { name: delete-policy, method: DELETE, call: solo-agentgateway-policy.delete-policy, inputParameters: [{ name: namespace, in: path, required: true }, { name: name, in: path, required: true }] }
+    - type: mcp
+      address: 0.0.0.0
+      port: 9090
+      namespace: solo-agentgateway-policy-sync-mcp
+      transport: http
+      description: MCP surface — agent tools for syncing Naftiko governance with agentgateway Policy CRDs.
+      tools:
+        - { name: solo-list-agentgateway-policies, description: List agentgateway Policy CRDs (guardrails, rate limits, MCP ACLs)., hints: { readOnly: true, idempotent: true }, call: solo-agentgateway-policy.list-policies }
+        - { name: solo-create-agentgateway-policy, description: Publish a Naftiko-declared governance policy as an agentgateway Policy., hints: { readOnly: false, idempotent: false }, call: solo-agentgateway-policy.create-policy }
+        - { name: solo-get-agentgateway-policy, description: Get an agentgateway Policy CRD., hints: { readOnly: true, idempotent: true }, call: solo-agentgateway-policy.get-policy }
+        - { name: solo-update-agentgateway-policy, description: Update an agentgateway Policy CRD., hints: { readOnly: false, idempotent: true }, call: solo-agentgateway-policy.update-policy }
+        - { name: solo-delete-agentgateway-policy, description: Delete an agentgateway Policy CRD., hints: { readOnly: false, destructive: true }, call: solo-agentgateway-policy.delete-policy }
