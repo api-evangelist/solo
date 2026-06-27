@@ -48,7 +48,7 @@ apis:
       - type: GitHubRepository
         url: https://github.com/solo-io/gloo
         title: Gloo Gateway Repository
-      - type: SDK
+      - type: SDKs
         url: https://github.com/solo-io/kgateway-client
         title: Go Client
       - type: KubernetesCRD
@@ -114,7 +114,7 @@ apis:
       - type: JSONStructure
         url: json-structure/solo-kgateway-structure.json
         title: kgateway CRD Structure
-      - type: Example
+      - type: Examples
         url: examples/solo-gloo-upstream-kube-example.json
         title: Kubernetes Upstream Example
 
@@ -174,7 +174,7 @@ apis:
       - type: JSONStructure
         url: json-structure/solo-agentgateway-structure.json
         title: agentgateway CRD Structure
-      - type: Example
+      - type: Examples
         url: examples/solo-agentgateway-backend-example.json
         title: AgentgatewayBackend Example
 
