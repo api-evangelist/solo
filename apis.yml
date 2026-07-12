@@ -197,6 +197,10 @@ apis:
         url: https://docs.solo.io/kagent-enterprise/latest/quickstart/
 
 common:
+  - type: VulnerabilityDisclosure
+    url: security/solo-vulnerability-disclosure.yml
+  - type: DomainSecurity
+    url: security/solo-domain-security.yml
   - type: Website
     url: https://www.solo.io/
   - type: Documentation
